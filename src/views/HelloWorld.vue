@@ -1,6 +1,13 @@
 <template>
   <div class="hello">
+    <img src="../assets/logo.png">
     <h1>{{ msg }}</h1>
+    <h2>My Links</h2>
+    <ul>
+      <li>
+        <a href="/todo-list">Todo List</a>
+      </li>
+    </ul>
     <h2>Essential Links</h2>
     <ul>
       <li>
@@ -88,7 +95,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to My Vue.js App'
     }
   }
 }
