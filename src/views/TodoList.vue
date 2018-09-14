@@ -22,8 +22,19 @@
         >
         </el-button>
       </div>
+      <el-container>
+        <el-radio-group
+          v-model="filter"
+          style="margin:auto;"
+        >
+          <el-radio-button label="0">ALL</el-radio-button>
+          <el-radio-button label="1">Todo</el-radio-button>
+          <el-radio-button label="2">Done</el-radio-button>
+        </el-radio-group>
+      </el-container>
+      <hr />
       <!-- 列表區 -->
-      <div v-for="todo in todos" :key="todo.id" class="text item">
+      <div v-for="todo in filterTodos" :key="todo.id" class="text item">
         <el-checkbox v-model="todo.done">
           <!-- 顯示完成任務 -->
           <span v-if="todo.done">
@@ -74,6 +85,7 @@ export default {
   // 設定給 template 用的，具有快取作用
   computed: {
     filterTodos: function () {
+      console.log('目前過濾器 --->', this.filter)
       let filterTodos = this.todos
       if (this.filter === '1') {
         filterTodos = filterTodos.filter((todo) => {
@@ -125,6 +137,10 @@ export default {
       this.todos = this.todos.filter((todo) => {
         return todo !== deletedTodo
       })
+    },
+    changeFilter (filter) {
+      console.log('過濾器變更', filter)
+      this.filter = filter
     }
   },
   mounted () {
