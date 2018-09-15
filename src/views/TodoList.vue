@@ -35,83 +35,61 @@
       </el-container>
       <hr />
       <!-- 列表區 -->
-      <div v-for="todo in filterTodos" :key="todo.id" class="text item">
-        <el-checkbox v-model="todo.done">
-          <!-- 顯示完成任務 -->
-          <span v-if="todo.done">
-            <del class="text done">{{ todo.text }}</del>
-          </span>
-          <!-- 顯示未完成任務 -->
-          <span v-else class="text">{{ todo.text }}</span>
-          <!-- 修改按鈕 -->
-          <el-button
-            type="success"
-            icon="el-icon-edit"
-            @click="editTodo(todo)"
-            plain
-          >
-          </el-button>
-          <!-- 刪除按鈕 -->
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            plain
-            @click="deleteTodo(todo)"
-          ></el-button>
-        </el-checkbox>
-      </div>
+      <Todo v-for="todo in filterTodos"
+        :key="todo.id"
+        class="text item"
+        :todo="todo"
+      />
     </el-card>
   </div>
 </template>
 
 <script>
+import Todo from '@/components/Todo.vue'
+import {mapState, mapMutations} from 'vuex'
 export default {
+  components: {
+    Todo
+  },
   // 資料區
   data () {
     return {
       newTodo: '',
       filter: '0',
-      id: 0,
-      todos: [{
-        id: 1,
-        text: 'Golang',
-        done: true
-      }, {
-        id: 2,
-        text: 'Docker',
-        done: false
-      }]
+      id: 0
     }
   },
   // 設定給 template 用的，具有快取作用
   computed: {
-    filterTodos: function () {
-      console.log('目前過濾器 --->', this.filter)
-      let filterTodos = this.todos
-      if (this.filter === '1') {
-        filterTodos = filterTodos.filter((todo) => {
+    ...mapState({
+      filterTodos: function (state) {
+        console.log('目前過濾器 --->', this.filter)
+        let filterTodos = state.todos
+        if (this.filter === '1') {
+          filterTodos = filterTodos.filter((todo) => {
+            return todo.done === false
+          })
+        } else if (this.filter === '2') {
+          filterTodos = filterTodos.filter((todo) => {
+            return todo.done === true
+          })
+        }
+        return filterTodos
+      },
+      totalCount: function (state) {
+        return state.todos.length
+      },
+      todoCount: function (state) {
+        return state.todos.filter((todo) => {
           return todo.done === false
-        })
-      } else if (this.filter === '2') {
-        filterTodos = filterTodos.filter((todo) => {
+        }).length
+      },
+      doneCount: function (state) {
+        return state.todos.filter((todo) => {
           return todo.done === true
-        })
+        }).length
       }
-      return filterTodos
-    },
-    totalCount: function () {
-      return this.todos.length
-    },
-    todoCount: function () {
-      return this.todos.filter((todo) => {
-        return todo.done === false
-      }).length
-    },
-    doneCount: function () {
-      return this.todos.filter((todo) => {
-        return todo.done === true
-      }).length
-    }
+    })
   },
   // 監聽變數
   watch: {
@@ -121,36 +99,22 @@ export default {
   },
   // 方法
   methods: {
+    /** 載入Vuex的 mutations 方法 **/
+    ...mapMutations({
+      addTodoFromVuex: 'addTodo'
+    }),
+    /** 以下為Vue裡面宣告的方法 **/
     addTodo () {
       this.newTodo = this.newTodo.trim()
       if (this.newTodo === '') {
         return
       }
-      console.log('增加新任務', this.newTodo)
-      this.todos.push({
+      this.addTodoFromVuex({
         id: this.id++,
         text: this.newTodo,
         done: false
       })
       this.newTodo = ''
-    },
-    editTodo (editTodo) {
-      let newText = prompt('請輸入要修改的任務')
-      newText = newText.trim()
-      if (newText === '') {
-        return
-      }
-      this.todos = this.todos.filter((todo) => {
-        if (todo.id === editTodo.id) {
-          todo.text = newText
-        }
-        return todo
-      })
-    },
-    deleteTodo (deletedTodo) {
-      this.todos = this.todos.filter((todo) => {
-        return todo !== deletedTodo
-      })
     },
     changeFilter (filter) {
       console.log('過濾器變更', filter)
@@ -158,7 +122,7 @@ export default {
     }
   },
   mounted () {
-    this.id = this.todos.length + 1
+    this.id = this.filterTodos.length + 1
     console.log('掛載完了, 目前ID =', this.id)
   }
 }
