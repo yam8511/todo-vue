@@ -22,14 +22,15 @@
         >
         </el-button>
       </div>
+      <!-- 過濾區、顯示計算區 -->
       <el-container>
         <el-radio-group
           v-model="filter"
           style="margin:auto;"
         >
-          <el-radio-button label="0">ALL</el-radio-button>
-          <el-radio-button label="1">Todo</el-radio-button>
-          <el-radio-button label="2">Done</el-radio-button>
+          <el-radio-button label="0">ALL ({{ totalCount }})</el-radio-button>
+          <el-radio-button label="1">Todo ({{ todoCount }})</el-radio-button>
+          <el-radio-button label="2">Done ({{ doneCount }})</el-radio-button>
         </el-radio-group>
       </el-container>
       <hr />
@@ -70,6 +71,7 @@ export default {
     return {
       newTodo: '',
       filter: '0',
+      id: 0,
       todos: [{
         id: 1,
         text: 'Golang',
@@ -78,8 +80,7 @@ export default {
         id: 2,
         text: 'Docker',
         done: false
-      }],
-      id: 0
+      }]
     }
   },
   // 設定給 template 用的，具有快取作用
@@ -97,6 +98,19 @@ export default {
         })
       }
       return filterTodos
+    },
+    totalCount: function () {
+      return this.todos.length
+    },
+    todoCount: function () {
+      return this.todos.filter((todo) => {
+        return todo.done === false
+      }).length
+    },
+    doneCount: function () {
+      return this.todos.filter((todo) => {
+        return todo.done === true
+      }).length
     }
   },
   // 監聽變數

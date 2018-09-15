@@ -5,7 +5,7 @@
     <h2>My Links</h2>
     <ul>
       <li>
-        <a href="/todo-list">Todo List</a>
+        <a href="#/todo-list">Todo List</a>
       </li>
     </ul>
     <h2>Essential Links</h2>
